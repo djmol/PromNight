@@ -10,6 +10,9 @@
 #import <AudioToolbox/AudioToolbox.h>
 
 @interface MainViewController : UIViewController <UITextFieldDelegate> {
+    
+    CFURLRef soundFileSuccess;
+    CFURLRef soundFileError;
 
 }
 
