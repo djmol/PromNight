@@ -31,6 +31,19 @@ static NSString * const ArrivedGuestsSegueIdentifier = @"ArrivedGuestsSegue";
 
 @synthesize arrivedPopover = _arrivedPopover;
 
+#define MAXLENGTH 6
+
+- (BOOL)textField:(UITextField *) textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    
+    NSUInteger oldLength = [textField.text length];
+    NSUInteger replacementLength = [string length];
+    NSUInteger rangeLength = range.length;
+    
+    NSUInteger newLength = oldLength - rangeLength + replacementLength;
+    
+    return newLength <= MAXLENGTH;
+}
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
@@ -38,6 +51,12 @@ static NSString * const ArrivedGuestsSegueIdentifier = @"ArrivedGuestsSegue";
     }
     return self;
 }
+
+- (void)dealloc
+{
+    CFRelease(soundFileError);
+    CFRelease(soundFileSuccess);    
+} 
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -95,7 +114,6 @@ static NSString * const ArrivedGuestsSegueIdentifier = @"ArrivedGuestsSegue";
     if (inputLength == 6) {
         [self checkBarcodeNumber:sender.text];
         sender.text = @"";
-        [sender resignFirstResponder];
     }
 }
 
@@ -171,7 +189,8 @@ static NSString * const ArrivedGuestsSegueIdentifier = @"ArrivedGuestsSegue";
             [attendee setValue:[NSDate date] forKey:kModelArrivalTime];
             self.status.text = [NSString stringWithFormat: @"%@ %@ has arrived", [attendee valueForKey:kModelFirstName], [attendee valueForKey:kModelLastName]];
             AudioServicesCreateSystemSoundID(soundFileSuccess, &soundID);
-            AudioServicesPlaySystemSound(soundID);            
+            AudioServicesPlaySystemSound(soundID);
+            [_inputField becomeFirstResponder];
             
         } else {
             NSString *arrivedAt = [dateFormatter stringFromDate:[attendee valueForKey:kModelArrivalTime]];

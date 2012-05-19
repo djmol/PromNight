@@ -24,6 +24,7 @@
 		FBA0252D155ADFEF00E6487E /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FBA0252C155ADFEF00E6487E /* AudioToolbox.framework */; };
 		FBA02531155AFED700E6487E /* Success.wav in Resources */ = {isa = PBXBuildFile; fileRef = FBA0252F155AFED700E6487E /* Success.wav */; };
 		FBA02532155AFED700E6487E /* Error.wav in Resources */ = {isa = PBXBuildFile; fileRef = FBA02530155AFED700E6487E /* Error.wav */; };
+		FBCAEA1615614DF6009DA482 /* checkbutton.png in Resources */ = {isa = PBXBuildFile; fileRef = FBCAEA1515614DF6009DA482 /* checkbutton.png */; };
 		FBFDED91153F0B3B002567A1 /* Default-Portrait@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = FBFDED90153F0B3B002567A1 /* Default-Portrait@2x~ipad.png */; };
 		FBFDED94153F1239002567A1 /* main.png in Resources */ = {isa = PBXBuildFile; fileRef = FBFDED93153F1239002567A1 /* main.png */; };
 /* End PBXBuildFile section */
@@ -56,6 +57,7 @@
 		FBA0252C155ADFEF00E6487E /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		FBA0252F155AFED700E6487E /* Success.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Success.wav; sourceTree = "<group>"; };
 		FBA02530155AFED700E6487E /* Error.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Error.wav; sourceTree = "<group>"; };
+		FBCAEA1515614DF6009DA482 /* checkbutton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = checkbutton.png; sourceTree = "<group>"; };
 		FBFDED90153F0B3B002567A1 /* Default-Portrait@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-Portrait@2x~ipad.png"; path = "../Default-Portrait@2x~ipad.png"; sourceTree = "<group>"; };
 		FBFDED93153F1239002567A1 /* main.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = main.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -146,6 +148,7 @@
 		EE51D2F11526054E008781A1 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				FBCAEA1515614DF6009DA482 /* checkbutton.png */,
 				FBA0252F155AFED700E6487E /* Success.wav */,
 				FBA02530155AFED700E6487E /* Error.wav */,
 				FBFDED93153F1239002567A1 /* main.png */,
@@ -217,6 +220,7 @@
 				FBFDED94153F1239002567A1 /* main.png in Resources */,
 				FBA02531155AFED700E6487E /* Success.wav in Resources */,
 				FBA02532155AFED700E6487E /* Error.wav in Resources */,
+				FBCAEA1615614DF6009DA482 /* checkbutton.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

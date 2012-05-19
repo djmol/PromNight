@@ -17,6 +17,7 @@
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="main.png" id="ZMZ-Nq-rzK">
                                 <rect key="frame" x="0.0" y="0.0" width="768" height="1004"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" name="alternateSelectedControlTextColor" catalog="System" colorSpace="catalog"/>
                             </imageView>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" clearsOnBeginEditing="YES" minimumFontSize="17" id="k3e-Um-uc6" userLabel="Barcode Input">
                                 <rect key="frame" x="320" y="246" width="331" height="31"/>
@@ -24,7 +25,7 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" keyboardType="numberPad" returnKeyType="done"/>
                                 <connections>
-                                    <action selector="barcodeNumberChanged:" destination="8S6-67-PoM" eventType="editingChanged" id="f6b-AR-SYh"/>
+                                    <action selector="barcodeNumberChanged:" destination="8S6-67-PoM" eventType="editingDidEnd" id="eQ8-6z-BZX"/>
                                     <outlet property="delegate" destination="8S6-67-PoM" id="lMv-m3-oni"/>
                                 </connections>
                             </textField>
@@ -56,11 +57,15 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="zCD-Hl-j9c">
-                                <rect key="frame" x="111" y="776" width="266" height="37"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="checkbutton.png" id="aJk-RP-0Dl">
+                                <rect key="frame" x="100" y="776" width="228" height="49"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <button opaque="NO" alpha="0.10000000000000003" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="zCD-Hl-j9c">
+                                <rect key="frame" x="100" y="776" width="228" height="49"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" title="Check Who's Arrived">
+                                <state key="normal">
                                     <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -148,8 +153,33 @@
         </scene>
     </scenes>
     <resources>
+        <image name="checkbutton.png" width="228" height="49"/>
         <image name="main.png" width="1536" height="2008"/>
     </resources>
+    <classes>
+        <class className="ArrivedGuestsCell" superclassName="UITableViewCell">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ArrivedGuestsCell.h"/>
+            <relationships>
+                <relationship kind="outlet" name="arrivalTime" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="nameLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="ticketNumber" candidateClass="UILabel"/>
+            </relationships>
+        </class>
+        <class className="ArrivedGuestsViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ArrivedGuestsViewController.h"/>
+        </class>
+        <class className="MainViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/MainViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="barcodeNumberChanged:" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="firstNameField" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="inputField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="lastNameField" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="status" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="ticketNumberField" candidateClass="UILabel"/>
+            </relationships>
+        </class>
+    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
         <simulatedOrientationMetrics key="orientation"/>
