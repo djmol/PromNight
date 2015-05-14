@@ -18,6 +18,7 @@
 @dynamic lastName;
 @dynamic ticketNumber;
 @dynamic lastNameInitial;
+@dynamic attendance;
 
 
 #pragma mark - Custom Accessors

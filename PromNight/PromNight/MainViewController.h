@@ -21,6 +21,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *ticketNumberField;
 @property (weak, nonatomic) IBOutlet UILabel *firstNameField;
 @property (weak, nonatomic) IBOutlet UILabel *lastNameField;
+@property (weak, nonatomic) IBOutlet UILabel *attendanceField;
 @property (weak, nonatomic) IBOutlet UILabel *status;
 @property (weak, nonatomic) NSArray *fetchedArrivedObjects;
 

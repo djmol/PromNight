@@ -38,7 +38,7 @@
 #pragma mark - KVO
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-    if (keyPath == @"guest") {
+    if ([keyPath  isEqual: @"guest"]) {
         [self updateLabels];
     } else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];

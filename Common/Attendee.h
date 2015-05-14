@@ -18,6 +18,7 @@
 @property (nonatomic, retain) NSString * firstName;
 @property (nonatomic, retain) NSString * lastName;
 @property (nonatomic, retain) NSNumber * ticketNumber;
+@property (nonatomic, retain) NSNumber * attendance;
 @property (nonatomic, retain) NSString * lastNameInitial;
 
 @end

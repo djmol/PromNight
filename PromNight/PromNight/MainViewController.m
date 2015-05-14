@@ -26,6 +26,7 @@ static NSString * const ArrivedGuestsSegueIdentifier = @"ArrivedGuestsSegue";
 @synthesize ticketNumberField = _ticketNumberField;
 @synthesize firstNameField = _firstNameField;
 @synthesize lastNameField = _lastNameField;
+@synthesize attendanceField = _attendanceField;
 @synthesize status = _status;
 @synthesize fetchedArrivedObjects;
 
@@ -67,6 +68,7 @@ static NSString * const ArrivedGuestsSegueIdentifier = @"ArrivedGuestsSegue";
     [self setTicketNumberField:nil];
     [self setFirstNameField:nil];
     [self setLastNameField:nil];
+    [self setAttendanceField:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
 }
@@ -180,6 +182,7 @@ static NSString * const ArrivedGuestsSegueIdentifier = @"ArrivedGuestsSegue";
         self.ticketNumberField.text = [[attendee valueForKey:kModelTicketNumber] stringValue];
         self.firstNameField.text = [attendee valueForKey:kModelFirstName];
         self.lastNameField.text = [attendee valueForKey:kModelLastName];
+        self.attendanceField.text = [[attendee valueForKey:kModelAttendance] stringValue];
         
         NSInteger isHere = [[attendee valueForKey:kModelArrived] boolValue];
         

@@ -15,4 +15,5 @@ static NSString * const kModelFirstName = @"firstName";
 static NSString * const kModelLastName = @"lastName";
 static NSString * const kModelTicketNumber = @"ticketNumber";
 static NSString * const kModelLastNameInitial = @"lastNameInitial";
+static NSString * const kModelAttendance = @"attendance";
 

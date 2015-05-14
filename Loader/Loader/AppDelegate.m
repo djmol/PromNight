@@ -191,7 +191,7 @@
     }
     
     NSPersistentStoreCoordinator *coordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:mom];
-    if (![coordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:url options:nil error:&error]) {
+    if (![coordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:url options:@{NSSQLitePragmasOption: @{@"journal_mode": @"delete"}}  error:&error]) {
         [[NSApplication sharedApplication] presentError:error];
         return nil;
     }
@@ -247,8 +247,8 @@
     for (NSString *line in arrayOfLines) {
         // Split the line into an array
         NSArray *attendeeElements = [line componentsSeparatedByString:@","];
-        
-        // Since we know that the order is ticketNumber, barcodeNumber, firstName, lastName we can create an object from this
+
+        // Since we know that the order is ticketNumber, barcodeNumber, firstName, lastName, attendace, arrived we can create an object from this
         
         // Create a new entity in the managed object context
         NSManagedObjectContext *moc = self.managedObjectContext;
@@ -258,12 +258,15 @@
         // We don't need to set the `arrived` value because that defaults to NO, which is correct
         
         [attendee setValue:[NSNumber numberWithInteger:[[attendeeElements objectAtIndex:0] integerValue]] forKey:@"ticketNumber"];
-        [attendee setValue:[NSNumber numberWithInteger:[[attendeeElements objectAtIndex:1] integerValue]] forKey:@"barcodeNumber"];
+        [attendee setValue:[NSNumber numberWithInteger:[[attendeeElements objectAtIndex:3] integerValue]] forKey:@"barcodeNumber"];
         
         // Trim leading and trailing whitespace in the names.
         NSString *firstName = [[attendeeElements objectAtIndex:2] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-        NSString *lastName = [[attendeeElements objectAtIndex:3] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-                
+        NSString *lastName = [[attendeeElements objectAtIndex:1] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        
+        [attendee setValue:[NSNumber numberWithInteger:[[attendeeElements objectAtIndex:4] integerValue]] forKey:@"attendance"];
+        [attendee setValue:[NSNumber numberWithInteger:[[attendeeElements objectAtIndex:5] boolValue]] forKey:@"arrived"];
+        
         [attendee setValue:firstName forKey:@"firstName"];
         [attendee setValue:lastName forKey:@"lastName"];
         
@@ -278,8 +281,20 @@
         [self.storeLocationLabel setStringValue:[self.storeURL path]];
         
     }
-        
-        
+    
+}
+
+- (NSError*)application:(NSApplication*)application
+       willPresentError:(NSError*)error
+{
+    if (error)
+    {
+        NSDictionary* userInfo = [error userInfo];
+        NSLog (@"encountered the following error: %@", userInfo);
+        Debugger();
+    }
+    
+    return error;
 }
 
 
