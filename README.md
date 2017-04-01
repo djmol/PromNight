@@ -2,7 +2,7 @@
 
 ## Description
 
-A simple iPad app to log students into an event with their ticket number.
+A simple iPad app to log students into an event with their ticket number or name.
 
 This consists of an Xcode workspace that holds two projects
 
