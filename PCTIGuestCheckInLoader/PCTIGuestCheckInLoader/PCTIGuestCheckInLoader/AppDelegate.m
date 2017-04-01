@@ -1,0 +1,305 @@
+//
+//  AppDelegate.m
+//  PCTIGuestCheckInLoader
+//
+//  Created by Dan on 6/9/16.
+//  Copyright © 2016 Passaic County Technical Institute. All rights reserved.
+//
+
+#import "AppDelegate.h"
+#import "Attendee.h"
+#import "CommonMacros.h"
+
+@interface AppDelegate ()
+
+@property (strong, nonatomic) NSURL *storeURL;
+
+- (void)parseFileAtURL:(NSURL *)url;
+
+@end
+
+@implementation AppDelegate
+
+@synthesize window = _window;
+@synthesize persistentStoreCoordinator = __persistentStoreCoordinator;
+@synthesize managedObjectModel = __managedObjectModel;
+@synthesize managedObjectContext = __managedObjectContext;
+@synthesize storeURL = _storeURL;
+@synthesize recordsToProcessLabel = _recordsToProcessLabel;
+@synthesize recordsProcessedLabel = _recordsProcessedLabel;
+@synthesize storeLocationLabel = _storeLocationLabel;
+
+#pragma mark - Application life cycle
+
+- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
+    // Insert code here to initialize your application
+}
+
+- (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender {
+    // When the window is closed, terminate the app
+    return YES;
+}
+
+- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender {
+    // Save changes in the application's managed object context before the application terminates.
+    
+    if (!__managedObjectContext) {
+        return NSTerminateNow;
+    }
+    
+    if (![[self managedObjectContext] commitEditing]) {
+        NSLog(@"%@:%@ unable to commit editing to terminate", [self class], NSStringFromSelector(_cmd));
+        return NSTerminateCancel;
+    }
+    
+    if (![[self managedObjectContext] hasChanges]) {
+        return NSTerminateNow;
+    }
+    
+    NSError *error = nil;
+    if (![[self managedObjectContext] save:&error]) {
+        
+        // Customize this code block to include application-specific recovery steps.
+        BOOL result = [sender presentError:error];
+        if (result) {
+            return NSTerminateCancel;
+        }
+        
+        NSString *question = NSLocalizedString(@"Could not save changes while quitting. Quit anyway?", @"Quit without saves error question message");
+        NSString *info = NSLocalizedString(@"Quitting now will lose any changes you have made since the last successful save", @"Quit without saves error question info");
+        NSString *quitButton = NSLocalizedString(@"Quit anyway", @"Quit anyway button title");
+        NSString *cancelButton = NSLocalizedString(@"Cancel", @"Cancel button title");
+        NSAlert *alert = [[NSAlert alloc] init];
+        [alert setMessageText:question];
+        [alert setInformativeText:info];
+        [alert addButtonWithTitle:quitButton];
+        [alert addButtonWithTitle:cancelButton];
+        
+        NSInteger answer = [alert runModal];
+        
+        if (answer == NSAlertAlternateReturn) {
+            return NSTerminateCancel;
+        }
+    }
+    
+    return NSTerminateNow;
+}
+
+#pragma mark - Actions
+
+// Performs the save action for the application, which is to send the save: message to the application's managed object context. Any encountered errors are presented to the user.
+- (IBAction)saveAction:(id)sender {
+    NSError *error = nil;
+    
+    if (![[self managedObjectContext] commitEditing]) {
+        NSLog(@"%@:%@ unable to commit editing before saving", [self class], NSStringFromSelector(_cmd));
+    }
+    
+    if (![[self managedObjectContext] save:&error]) {
+        [[NSApplication sharedApplication] presentError:error];
+    }
+}
+
+- (IBAction)loadData:(id)sender {
+    NSOpenPanel *panel = [NSOpenPanel openPanel];
+    
+    panel.allowedFileTypes = [NSArray arrayWithObject:@"csv"];
+    panel.canChooseDirectories = NO;
+    
+    [panel beginSheetModalForWindow:self.window completionHandler:^(NSInteger result) {
+        if (result == NSFileHandlingPanelOKButton) {
+            [self parseFileAtURL:panel.URL];
+        } else {
+            DLog(@"File selection cancelled");
+        }
+    }];
+    
+}
+
+#pragma mark - Data methods
+
+// Returns the directory the application uses to store the Core Data store file. This code uses a directory named "com.junglecandy.Loader" in the user's Application Support directory.
+- (NSURL *)applicationFilesDirectory {
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSURL *appSupportURL = [[fileManager URLsForDirectory:NSApplicationSupportDirectory inDomains:NSUserDomainMask] lastObject];
+    return [appSupportURL URLByAppendingPathComponent:@"us.nj.tec.pcti.PCTIGuestCheckInLoader"];
+}
+
+// Creates if necessary and returns the managed object model for the application.
+- (NSManagedObjectModel *)managedObjectModel {
+    if (__managedObjectModel) {
+        return __managedObjectModel;
+    }
+    
+    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"PCTIGuestCheckIn" withExtension:@"mom"];
+    __managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
+    return __managedObjectModel;
+}
+
+// Returns the persistent store coordinator for the application. This implementation creates and return a coordinator, having added the store for the application to it. (The directory for the store is created, if necessary.)
+- (NSPersistentStoreCoordinator *)persistentStoreCoordinator {
+    if (__persistentStoreCoordinator) {
+        return __persistentStoreCoordinator;
+    }
+    
+    NSManagedObjectModel *mom = [self managedObjectModel];
+    if (!mom) {
+        NSLog(@"%@:%@ No model to generate a store from", [self class], NSStringFromSelector(_cmd));
+        return nil;
+    }
+    
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSURL *applicationFilesDirectory = [self applicationFilesDirectory];
+    NSError *error = nil;
+    
+    NSDictionary *properties = [applicationFilesDirectory resourceValuesForKeys:[NSArray arrayWithObject:NSURLIsDirectoryKey] error:&error];
+    
+    if (!properties) {
+        BOOL ok = NO;
+        if ([error code] == NSFileReadNoSuchFileError) {
+            ok = [fileManager createDirectoryAtPath:[applicationFilesDirectory path] withIntermediateDirectories:YES attributes:nil error:&error];
+        }
+        if (!ok) {
+            [[NSApplication sharedApplication] presentError:error];
+            return nil;
+        }
+    } else {
+        if (![[properties objectForKey:NSURLIsDirectoryKey] boolValue]) {
+            // Customize and localize this error.
+            NSString *failureDescription = [NSString stringWithFormat:@"Expected a folder to store application data, found a file (%@).", [applicationFilesDirectory path]];
+            
+            NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+            [dict setValue:failureDescription forKey:NSLocalizedDescriptionKey];
+            error = [NSError errorWithDomain:@"YOUR_ERROR_DOMAIN" code:101 userInfo:dict];
+            
+            [[NSApplication sharedApplication] presentError:error];
+            return nil;
+        }
+    }
+    
+    NSURL *url = [applicationFilesDirectory URLByAppendingPathComponent:@"PCTIGuestCheckIn.sqlite"];
+    
+    // Keep a reference to the URL for the store
+    self.storeURL = url;
+    
+    // If a store already exists - we want to delete it so we are always creating a new store rather than appending to it.
+    if ([url checkResourceIsReachableAndReturnError:nil]) {
+        NSFileManager *fm = [[NSFileManager alloc] init];
+        if (![fm removeItemAtURL:url error:&error]) {
+            DLog(@"Can't remove existing store because: %@", error);
+            abort(); // Harsh, but no point carrying on if we can't remove the existing store.
+        }
+    }
+    
+    NSPersistentStoreCoordinator *coordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:mom];
+    if (![coordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:url options:@{NSSQLitePragmasOption: @{@"journal_mode": @"delete"}}  error:&error]) {
+        [[NSApplication sharedApplication] presentError:error];
+        return nil;
+    }
+    __persistentStoreCoordinator = coordinator;
+    
+    return __persistentStoreCoordinator;
+}
+
+// Returns the managed object context for the application (which is already bound to the persistent store coordinator for the application.)
+- (NSManagedObjectContext *)managedObjectContext {
+    if (__managedObjectContext) {
+        return __managedObjectContext;
+    }
+    
+    NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
+    if (!coordinator) {
+        NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+        [dict setValue:@"Failed to initialize the store" forKey:NSLocalizedDescriptionKey];
+        [dict setValue:@"There was an error building up the data file." forKey:NSLocalizedFailureReasonErrorKey];
+        NSError *error = [NSError errorWithDomain:@"YOUR_ERROR_DOMAIN" code:9999 userInfo:dict];
+        [[NSApplication sharedApplication] presentError:error];
+        return nil;
+    }
+    __managedObjectContext = [[NSManagedObjectContext alloc] init];
+    [__managedObjectContext setPersistentStoreCoordinator:coordinator];
+    
+    return __managedObjectContext;
+}
+
+// Returns the NSUndoManager for the application. In this case, the manager returned is that of the managed object context for the application.
+- (NSUndoManager *)windowWillReturnUndoManager:(NSWindow *)window {
+    return [[self managedObjectContext] undoManager];
+}
+
+#pragma mark - Private Methods
+
+- (void)parseFileAtURL:(NSURL *)url {
+    NSError *error;
+    NSString *fileContents = [NSString stringWithContentsOfURL:url encoding:NSMacOSRomanStringEncoding/*NSUTF8StringEncoding*/ error:&error];
+    
+    if (!fileContents) {
+        DLog(@"Error reading file: %@", error);
+        abort(); // Bit harsh - but if we can't read the file, there's not much the app can do.
+    }
+    
+    NSMutableArray *arrayOfLines = [[fileContents componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] mutableCopy];
+    
+    // Remove the first line, which just contains the headers
+    [arrayOfLines removeObjectAtIndex:0];
+    
+    NSInteger numberOfRecordsToProcess = [arrayOfLines count];
+    NSInteger numberOfRecordsSuccessfullyProcessed = 0;
+    
+    [arrayOfLines removeObject:@""];
+    
+    for (NSString *line in arrayOfLines) {
+        // Split the line into an array
+        NSArray *attendeeElements = [line componentsSeparatedByString:@","];
+        
+        // Since we know that the order is ticketNumber, barcodeNumber, firstName, lastName, attendace, arrived we can create an object from this
+        
+        // Create a new entity in the managed object context
+        NSManagedObjectContext *moc = self.managedObjectContext;
+        Attendee *attendee = [NSEntityDescription insertNewObjectForEntityForName:@"Attendee" inManagedObjectContext:moc];
+        
+        // Set the values of the the element.
+        // We don't need to set the `arrived` value because that defaults to NO, which is correct
+        
+        [attendee setValue:[NSNumber numberWithInteger:[[attendeeElements objectAtIndex:0] integerValue]] forKey:@"ticketNumber"];
+        [attendee setValue:[NSNumber numberWithInteger:[[attendeeElements objectAtIndex:1] integerValue]] forKey:@"barcodeNumber"];
+        
+        // Trim leading and trailing whitespace in the names.
+        NSString *firstName = [[attendeeElements objectAtIndex:2] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        NSString *lastName = [[attendeeElements objectAtIndex:3] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        
+        [attendee setValue:[NSNumber numberWithInteger:[[attendeeElements objectAtIndex:4] integerValue]] forKey:@"attendance"];
+        [attendee setValue:[NSNumber numberWithInteger:[[attendeeElements objectAtIndex:5] boolValue]] forKey:@"arrived"];
+        
+        [attendee setValue:firstName forKey:@"firstName"];
+        [attendee setValue:lastName forKey:@"lastName"];
+        
+        // Save the new object to the store.
+        if (![moc save:&error]) {
+            DLog(@"Unable to save record: %@, because: %@", line, error);
+        } else {
+            numberOfRecordsSuccessfullyProcessed++;
+        }
+        [self.recordsToProcessLabel setStringValue:[NSString stringWithFormat:@"%lu", numberOfRecordsToProcess]];
+        [self.recordsProcessedLabel setStringValue:[NSString stringWithFormat:@"%lu", numberOfRecordsSuccessfullyProcessed]];
+        [self.storeLocationLabel setStringValue:[self.storeURL path]];
+        
+    }
+    
+}
+
+- (NSError*)application:(NSApplication*)application
+       willPresentError:(NSError*)error
+{
+    if (error)
+    {
+        NSDictionary* userInfo = [error userInfo];
+        NSLog (@"encountered the following error: %@", userInfo);
+        Debugger();
+    }
+    
+    return error;
+}
+
+
+@end

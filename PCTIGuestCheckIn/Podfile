@@ -1,0 +1,3 @@
+target 'PCTIGuestCheckIn' do
+    pod 'MTBBarcodeScanner'
+end

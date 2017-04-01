@@ -1,0 +1,317 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		7BDD25BA1D09AB1300825D1A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7BDD25B91D09AB1300825D1A /* AppDelegate.m */; };
+		7BDD25BD1D09AB1300825D1A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7BDD25BC1D09AB1300825D1A /* main.m */; };
+		7BDD25C51D09AB1300825D1A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7BDD25C41D09AB1300825D1A /* Assets.xcassets */; };
+		7BDD25D01D09AB9500825D1A /* PCTIGuestCheckIn.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = 7BDD25CF1D09AB9500825D1A /* PCTIGuestCheckIn.xcdatamodel */; };
+		7BDD25D41D09AC4100825D1A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7BDD25D21D09AC4100825D1A /* InfoPlist.strings */; };
+		7BDD25D91D09AC5C00825D1A /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7BDD25D61D09AC5C00825D1A /* MainMenu.xib */; };
+		7BDD25DA1D09AC5C00825D1A /* Attendee.m in Sources */ = {isa = PBXBuildFile; fileRef = 7BDD25D81D09AC5C00825D1A /* Attendee.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		7BDD25B51D09AB1300825D1A /* PCTIGuestCheckInLoader.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PCTIGuestCheckInLoader.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7BDD25B81D09AB1300825D1A /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		7BDD25B91D09AB1300825D1A /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		7BDD25BC1D09AB1300825D1A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		7BDD25C41D09AB1300825D1A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		7BDD25C91D09AB1300825D1A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7BDD25CF1D09AB9500825D1A /* PCTIGuestCheckIn.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = PCTIGuestCheckIn.xcdatamodel; sourceTree = "<group>"; };
+		7BDD25D11D09AC4100825D1A /* CommonMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonMacros.h; sourceTree = "<group>"; };
+		7BDD25D21D09AC4100825D1A /* InfoPlist.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
+		7BDD25D31D09AC4100825D1A /* Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Prefix.pch; sourceTree = "<group>"; };
+		7BDD25D51D09AC5C00825D1A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		7BDD25D71D09AC5C00825D1A /* Attendee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Attendee.h; path = /Users/dmolczyk/Documents/XCodeProjects/PromNight/Loader/Loader/../../Common/Attendee.h; sourceTree = "<absolute>"; };
+		7BDD25D81D09AC5C00825D1A /* Attendee.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Attendee.m; path = /Users/dmolczyk/Documents/XCodeProjects/PromNight/Loader/Loader/../../Common/Attendee.m; sourceTree = "<absolute>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		7BDD25B21D09AB1300825D1A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		7BDD25AC1D09AB1300825D1A = {
+			isa = PBXGroup;
+			children = (
+				7BDD25B71D09AB1300825D1A /* PCTIGuestCheckInLoader */,
+				7BDD25B61D09AB1300825D1A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		7BDD25B61D09AB1300825D1A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				7BDD25B51D09AB1300825D1A /* PCTIGuestCheckInLoader.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		7BDD25B71D09AB1300825D1A /* PCTIGuestCheckInLoader */ = {
+			isa = PBXGroup;
+			children = (
+				7BDD25B81D09AB1300825D1A /* AppDelegate.h */,
+				7BDD25B91D09AB1300825D1A /* AppDelegate.m */,
+				7BDD25C41D09AB1300825D1A /* Assets.xcassets */,
+				7BDD25D61D09AC5C00825D1A /* MainMenu.xib */,
+				7BDD25DB1D09AC6200825D1A /* Model */,
+				7BDD25BB1D09AB1300825D1A /* Supporting Files */,
+			);
+			path = PCTIGuestCheckInLoader;
+			sourceTree = "<group>";
+		};
+		7BDD25BB1D09AB1300825D1A /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				7BDD25D11D09AC4100825D1A /* CommonMacros.h */,
+				7BDD25C91D09AB1300825D1A /* Info.plist */,
+				7BDD25D21D09AC4100825D1A /* InfoPlist.strings */,
+				7BDD25D31D09AC4100825D1A /* Prefix.pch */,
+				7BDD25BC1D09AB1300825D1A /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		7BDD25DB1D09AC6200825D1A /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				7BDD25D71D09AC5C00825D1A /* Attendee.h */,
+				7BDD25D81D09AC5C00825D1A /* Attendee.m */,
+				7BDD25CF1D09AB9500825D1A /* PCTIGuestCheckIn.xcdatamodel */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		7BDD25B41D09AB1300825D1A /* PCTIGuestCheckInLoader */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7BDD25CC1D09AB1300825D1A /* Build configuration list for PBXNativeTarget "PCTIGuestCheckInLoader" */;
+			buildPhases = (
+				7BDD25B11D09AB1300825D1A /* Sources */,
+				7BDD25B21D09AB1300825D1A /* Frameworks */,
+				7BDD25B31D09AB1300825D1A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PCTIGuestCheckInLoader;
+			productName = PCTIGuestCheckInLoader;
+			productReference = 7BDD25B51D09AB1300825D1A /* PCTIGuestCheckInLoader.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		7BDD25AD1D09AB1300825D1A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0730;
+				ORGANIZATIONNAME = "Passaic County Technical Institute";
+				TargetAttributes = {
+					7BDD25B41D09AB1300825D1A = {
+						CreatedOnToolsVersion = 7.3.1;
+					};
+				};
+			};
+			buildConfigurationList = 7BDD25B01D09AB1300825D1A /* Build configuration list for PBXProject "PCTIGuestCheckInLoader" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 7BDD25AC1D09AB1300825D1A;
+			productRefGroup = 7BDD25B61D09AB1300825D1A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				7BDD25B41D09AB1300825D1A /* PCTIGuestCheckInLoader */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		7BDD25B31D09AB1300825D1A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7BDD25C51D09AB1300825D1A /* Assets.xcassets in Resources */,
+				7BDD25D41D09AC4100825D1A /* InfoPlist.strings in Resources */,
+				7BDD25D91D09AC5C00825D1A /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		7BDD25B11D09AB1300825D1A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7BDD25DA1D09AC5C00825D1A /* Attendee.m in Sources */,
+				7BDD25D01D09AB9500825D1A /* PCTIGuestCheckIn.xcdatamodel in Sources */,
+				7BDD25BD1D09AB1300825D1A /* main.m in Sources */,
+				7BDD25BA1D09AB1300825D1A /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		7BDD25D61D09AC5C00825D1A /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				7BDD25D51D09AC5C00825D1A /* en */,
+			);
+			name = MainMenu.xib;
+			path = ../../../../PromNight/Loader/Loader;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		7BDD25CA1D09AB1300825D1A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		7BDD25CB1D09AB1300825D1A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		7BDD25CD1D09AB1300825D1A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = PCTIGuestCheckInLoader/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = us.nj.tec.pcti.PCTIGuestCheckInLoader;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		7BDD25CE1D09AB1300825D1A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = PCTIGuestCheckInLoader/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = us.nj.tec.pcti.PCTIGuestCheckInLoader;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		7BDD25B01D09AB1300825D1A /* Build configuration list for PBXProject "PCTIGuestCheckInLoader" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7BDD25CA1D09AB1300825D1A /* Debug */,
+				7BDD25CB1D09AB1300825D1A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7BDD25CC1D09AB1300825D1A /* Build configuration list for PBXNativeTarget "PCTIGuestCheckInLoader" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7BDD25CD1D09AB1300825D1A /* Debug */,
+				7BDD25CE1D09AB1300825D1A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 7BDD25AD1D09AB1300825D1A /* Project object */;
+}

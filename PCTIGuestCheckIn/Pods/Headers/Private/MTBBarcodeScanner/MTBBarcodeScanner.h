@@ -1,0 +1,5 @@
+XSym
+0067
+44597066753a3d6cbc10bb9dec808fa0
+../../../MTBBarcodeScanner/Classes/ios/Scanners/MTBBarcodeScanner.h
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
