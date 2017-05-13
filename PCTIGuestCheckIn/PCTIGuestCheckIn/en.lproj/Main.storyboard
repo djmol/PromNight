@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="15G1217" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" colorMatched="YES" initialViewController="8S6-67-PoM">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16E195" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" colorMatched="YES" initialViewController="8S6-67-PoM">
     <device id="ipad9_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -17,7 +17,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="main" id="ZMZ-Nq-rzK">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="main-with-attendance" id="ZMZ-Nq-rzK">
                                 <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -83,7 +83,7 @@
                                 </connections>
                             </button>
                             <view hidden="YES" contentMode="scaleToFill" misplaced="YES" id="RJP-3Q-5J3">
-                                <rect key="frame" x="384" y="605" width="384" height="419"/>
+                                <rect key="frame" x="372" y="620" width="396" height="404"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="scan-hud" id="l6I-fO-YsR">
@@ -106,10 +106,29 @@
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="id-number" id="xpb-qJ-soL">
+                                <rect key="frame" x="146" y="244" width="137" height="33"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="OfG-3T-3w4">
+                                <rect key="frame" x="92" y="244" width="46" height="33"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" image="verification-mode"/>
+                                <connections>
+                                    <action selector="touchedVerificationModeButton:" destination="8S6-67-PoM" eventType="touchUpInside" id="f2q-Mt-idc"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" misplaced="YES" text="" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" minimumFontSize="12" id="1II-sw-Qsf" userLabel="Label - Status">
+                                <rect key="frame" x="249" y="556" width="326" height="42"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="19"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
                     <connections>
+                        <outlet property="attendanceField" destination="1II-sw-Qsf" id="Zfa-0a-5o1"/>
                         <outlet property="cameraButton" destination="Ce4-eq-5W2" id="Sm0-y3-0mr"/>
                         <outlet property="firstNameField" destination="mbq-8a-eRH" id="Rcg-n3-e2Q"/>
                         <outlet property="flashSegmentedControl" destination="Dwh-Ib-Aa1" id="bde-9i-3SE"/>
@@ -119,6 +138,8 @@
                         <outlet property="previewView" destination="RJP-3Q-5J3" id="TMH-0n-wAW"/>
                         <outlet property="status" destination="rPD-94-rJw" id="SEj-yt-SZr"/>
                         <outlet property="ticketNumberField" destination="ghL-rA-TOd" id="Xtz-Ap-Jj2"/>
+                        <outlet property="verificationModeButton" destination="OfG-3T-3w4" id="EZz-qu-GEE"/>
+                        <outlet property="verificationModeView" destination="xpb-qJ-soL" id="Wu2-dD-ubo"/>
                         <segue destination="uGP-q2-CF9" kind="popover" identifier="DuplicateGuestsSegue" popoverAnchorView="k3e-Um-uc6" id="D08-eU-Kb6">
                             <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
                         </segue>
@@ -161,7 +182,7 @@
                                 <rect key="frame" x="0.0" y="66" width="750" height="82"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="3t0-BC-OZ4" id="epc-0i-jpJ">
-                                    <rect key="frame" x="0.0" y="0.0" width="750" height="81"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="750" height="81.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Name" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" adjustsFontSizeToFit="NO" id="tou-yg-AXa">
@@ -226,7 +247,7 @@
                                 <rect key="frame" x="0.0" y="22" width="300" height="82"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="GaZ-Re-2qk" id="SYL-WA-ERT">
-                                    <rect key="frame" x="0.0" y="0.0" width="300" height="81"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="300" height="81.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Name" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" adjustsFontSizeToFit="NO" id="Dj3-Ud-oXK">
@@ -261,8 +282,10 @@
         <image name="checkbutton" width="114" height="24"/>
         <image name="delete" width="128" height="128"/>
         <image name="delete-highlight" width="256" height="256"/>
-        <image name="main" width="768" height="1024"/>
+        <image name="id-number" width="137" height="33"/>
+        <image name="main-with-attendance" width="768" height="1024"/>
         <image name="scan-hud" width="250" height="250"/>
+        <image name="verification-mode" width="46" height="33"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>

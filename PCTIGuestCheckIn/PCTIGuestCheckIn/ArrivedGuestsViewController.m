@@ -15,6 +15,7 @@
 @interface ArrivedGuestsViewController ()
 
 @property (strong, nonatomic, readonly) NSFetchedResultsController *frc;
+@property (strong, nonatomic) NSMutableArray *guests;
 
 @end
 
@@ -41,6 +42,8 @@
 #pragma mark - View lifecycle
 
 - (void)viewWillAppear:(BOOL)animated {
+    self.guests = [[NSMutableArray alloc] init];
+    
     // Fire up the frc to find out who has already arrived.
     [self.tableView setRowHeight:82.0];
     NSError *error;
@@ -117,6 +120,9 @@
     ArrivedGuestsCell *cell = (ArrivedGuestsCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
     cell.guest = [self.frc objectAtIndexPath:indexPath];
+    if (![self.guests containsObject:cell.guest]) {
+        [self.guests addObject:cell.guest];
+    }
     
     return cell;
 }
@@ -134,9 +140,8 @@
                                 style:UIAlertActionStyleDestructive
                                 handler:^(UIAlertAction * action)
                                 {
-                                    NSArray *allArrivedGuests = [self.tableView visibleCells];
-                                    for (ArrivedGuestsCell* cell in allArrivedGuests) {
-                                        [cell.guest setValue:[NSNumber numberWithBool:NO] forKey:kModelArrived];
+                                    for (NSObject *guest in self.guests) {
+                                        [guest setValue:[NSNumber numberWithBool:NO] forKey:kModelArrived];
                                     }
                                     [self.tableView reloadData];
                                 }];

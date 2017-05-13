@@ -18,13 +18,19 @@ static NSString * const DuplicateGuestsSegueIdentifier = @"DuplicateGuestsSegue"
 
 @interface MainViewController ()
 
+typedef enum VerificationMode : NSUInteger {
+    IDNumber = 0,
+    LastName
+} VerificationMode;
+
 @property (strong, nonatomic, readonly) UIPopoverController *arrivedPopover;
 @property (strong, nonatomic, readonly) UIPopoverController *duplicatePopover;
 @property (strong, nonatomic) NSString *lastScannerInput;
 @property (strong, nonatomic) MTBBarcodeScanner *scanner;
 @property (strong, nonatomic) NSLock *lock;
-
-@property (nonatomic, strong) NSMutableDictionary *overlayViews;
+@property (nonatomic) bool isScanning;
+@property (nonatomic) VerificationMode verificationMode;
+@property (strong, nonatomic) NSMutableDictionary *overlayViews;
 
 - (void)checkBarcodeNumber:(NSString *)string;
 - (void)checkLastName:(NSString *)string;
@@ -62,9 +68,11 @@ static NSString * const DuplicateGuestsSegueIdentifier = @"DuplicateGuestsSegue"
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    // Initialize scanner
     self.lock = [[NSLock alloc] init];
     self.lastScannerInput = [[NSString alloc] init];
     self.scanner = [[MTBBarcodeScanner alloc] initWithPreviewView:self.previewView];
+    self.isScanning = false;
     
     // Set flashSegmentedControl visibility
     AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
@@ -72,6 +80,15 @@ static NSString * const DuplicateGuestsSegueIdentifier = @"DuplicateGuestsSegue"
         [self.flashSegmentedControl setHidden:false];
     else
         [self.flashSegmentedControl setHidden:true];
+    
+    // Set default verification mode
+    self.verificationMode = IDNumber;
+    self.verificationModeView.image = [UIImage imageNamed:@"id-number"];
+    
+    // Set sounds
+    CFBundleRef mainBundle = CFBundleGetMainBundle();
+    soundFileError = CFBundleCopyResourceURL(mainBundle, (CFStringRef) @"Error", CFSTR ("wav"), NULL);
+    soundFileSuccess = CFBundleCopyResourceURL(mainBundle, (CFStringRef) @"Success", CFSTR ("wav"), NULL);
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -164,6 +181,22 @@ static NSString * const DuplicateGuestsSegueIdentifier = @"DuplicateGuestsSegue"
     }
 }
 
+- (IBAction)touchedVerificationModeButton:(id)sender {
+    // This is a lame way of doing this, but it's a quick fix for a simple app.
+    if (self.verificationMode == IDNumber) {
+        // Switch from ID Number to Last Name
+        self.verificationMode = LastName;
+        self.verificationModeView.image = [UIImage imageNamed:@"last-name"];
+    } else if (self.verificationMode == LastName) {
+        // Switch from Last Name to ID Number
+        self.verificationMode = IDNumber;
+        self.verificationModeView.image = [UIImage imageNamed:@"id-number"];
+    }
+    
+    // Reset scanner input
+    self.lastScannerInput = nil;
+}
+
 - (IBAction)touchedCameraButton:(id)sender {
   
     //CGRect rect = self.hudView.frame;
@@ -193,6 +226,7 @@ static NSString * const DuplicateGuestsSegueIdentifier = @"DuplicateGuestsSegue"
         // Show scanner view
         [self.previewView setHidden:false];
         [self.scanner unfreezeCapture];
+        self.isScanning = true;
         
         // Reset scanner input
         self.lastScannerInput = @"";
@@ -216,7 +250,7 @@ static NSString * const DuplicateGuestsSegueIdentifier = @"DuplicateGuestsSegue"
                         [self.scanner freezeCapture];
                         
                         // Check the scanner input data against the database
-                        [self checkLastName:code.stringValue];
+                        [self checkEntry:code.stringValue];
                         self.lastScannerInput = code.stringValue;
                         [NSThread sleepForTimeInterval:.5];
                         
@@ -242,6 +276,7 @@ static NSString * const DuplicateGuestsSegueIdentifier = @"DuplicateGuestsSegue"
     // Stop scanner and hide preview view
     [self.scanner stopScanning];
     [self.previewView setHidden:true];
+    self.isScanning = false;
     
     // Remove overlays
     for (NSString *code in self.overlayViews.allKeys) {
@@ -324,7 +359,7 @@ static NSString * const DuplicateGuestsSegueIdentifier = @"DuplicateGuestsSegue"
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     if (!isEmpty(textField.text)) {
-        [self checkLastName:textField.text];
+        [self checkEntry:textField.text];
         textField.text = @"";
         return YES;
     } else {
@@ -332,8 +367,27 @@ static NSString * const DuplicateGuestsSegueIdentifier = @"DuplicateGuestsSegue"
     }
 }
 
-#pragma mark - Private methods;
+#pragma mark - Verification
 
+- (void)checkEntry:(NSString *)entry{
+    if (self.verificationMode == IDNumber) {
+        [self checkBarcodeNumber:entry];
+    } else if (self.verificationMode == LastName) {
+        [self checkLastName:entry];
+    }
+}
+
+- (NSString *)pruneWhitespace:(NSString *)stringToPrune {
+    // Prune whitespace from both ends of string
+    NSMutableString *prunedString = [[NSMutableString alloc] init];
+    NSString *endPruned;
+    endPruned = [self stringByTrimmingTrailingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] fromString:stringToPrune];
+    [prunedString appendString:[self stringByTrimmingLeadingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] fromString:endPruned]];
+    
+    return prunedString;
+}
+
+// TODO: Combine this and checkBarcodeNumber. They should've been together to begin with, but surname checking was implemented as a quick-fix.
 - (void)checkLastName:(NSString *)string {
     // Sometimes we check guests against last names in our database.
     static NSDateFormatter *dateFormatter = nil;
@@ -350,21 +404,13 @@ static NSString * const DuplicateGuestsSegueIdentifier = @"DuplicateGuestsSegue"
     [fetchRequest setEntity:entity];
     
     // Prune whitespace
-    NSMutableString *lastNameString = [[NSMutableString alloc] init];
-    NSString *endPruned;
-    endPruned = [self stringByTrimmingTrailingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] fromString:string];
-    [lastNameString appendString:[self stringByTrimmingLeadingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] fromString:endPruned]];
+    NSString *lastNameString = [self pruneWhitespace:string];
     
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"lastName ==[c] %@", lastNameString];
     [fetchRequest setPredicate:predicate];
     
     NSError *error = nil;
     NSArray *fetchedObjects = [self.managedObjectContext executeFetchRequest:fetchRequest error:&error];
-    
-    CFBundleRef mainbundle = CFBundleGetMainBundle();
-    UInt32 soundID;
-    soundFileError = CFBundleCopyResourceURL(mainbundle, (CFStringRef) @"Error", CFSTR ("wav"), NULL);
-    soundFileSuccess = CFBundleCopyResourceURL(mainbundle, (CFStringRef) @"Success", CFSTR ("wav"), NULL);
     
     if (!fetchedObjects) {
         DLog(@"Unable to retrieve any values because: %@", error);
@@ -381,9 +427,8 @@ static NSString * const DuplicateGuestsSegueIdentifier = @"DuplicateGuestsSegue"
         self.ticketNumberField.text = @"";
         self.firstNameField.text = @"";
         self.lastNameField.text = @"";
-        self.status.text = [NSString stringWithFormat:@"Last name not found"];
-        AudioServicesCreateSystemSoundID(soundFileError, &soundID);
-        AudioServicesPlaySystemSound(soundID);
+        self.status.text = [NSString stringWithFormat:@"Last name not found."];
+        [self playSound:soundFileError];
         
     } else {
         // Valid guest
@@ -399,35 +444,41 @@ static NSString * const DuplicateGuestsSegueIdentifier = @"DuplicateGuestsSegue"
         } else {
             attendee = [fetchedObjects lastObject];
             
-            self.ticketNumberField.text = [[attendee valueForKey:kModelBarcodeNumber] stringValue];
-            self.firstNameField.text = [attendee valueForKey:kModelFirstName];
-            self.lastNameField.text = [attendee valueForKey:kModelLastName];
-            self.attendanceField.text = [[attendee valueForKey:kModelAttendance] stringValue];
+            NSString *ticketNumber = [[attendee valueForKey:kModelTicketNumber] stringValue];
+            NSString *firstName = [attendee valueForKey:kModelFirstName];
+            NSString *lastName = [attendee valueForKey:kModelLastName];
+            NSString *attendance = [[attendee valueForKey:kModelAttendance] stringValue];
+            
+            self.ticketNumberField.text = ticketNumber;
+            self.firstNameField.text = firstName;
+            self.lastNameField.text = lastName;
+            self.attendanceField.text = attendance;
             
             NSInteger isHere = [[attendee valueForKey:kModelArrived] boolValue];
             
-            if (!isHere) {
-                // Checking in for the first time
+            if ([[attendee valueForKey:kModelAttendance] intValue] > 0) {
+                if (!isHere) {
+                    // Checking in for the first time
+                    [attendee setValue:[NSNumber numberWithBool:YES] forKey:kModelArrived];
+                    [attendee setValue:[NSDate date] forKey:kModelArrivalTime];
+                    self.status.text = [NSString stringWithFormat: @"%@ %@ is now checked in.", firstName, lastName];
+                    [self playSound:soundFileSuccess];
+                    if (!self.isScanning) {
+                        [_inputField becomeFirstResponder];
+                    }
+                    
+                } else {
+                    // Guest had already checked in previously
+                    NSString *arrivedAt = [dateFormatter stringFromDate:[attendee valueForKey:kModelArrivalTime]];
+                    [self presentAlreadyArrivedErrorForFirstName:firstName lastName:lastName arrivedAtTime:arrivedAt];
+                    self.status.text = [NSString stringWithFormat:@"%@ %@ was previously scanned into the system at %@!", firstName, lastName, arrivedAt];
+                }
+            } else {
+                // Guest has invalid ticket (i.e. ticket exists, but the person didn't buy admission, so it's a useless ticket)
                 [attendee setValue:[NSNumber numberWithBool:YES] forKey:kModelArrived];
                 [attendee setValue:[NSDate date] forKey:kModelArrivalTime];
-                self.status.text = [NSString stringWithFormat: @"%@ %@ is now checked in.", [attendee valueForKey:kModelFirstName], [attendee valueForKey:kModelLastName]];
-                AudioServicesCreateSystemSoundID(soundFileSuccess, &soundID);
-                AudioServicesPlaySystemSound(soundID);
-                //[_inputField becomeFirstResponder];
-                
-            } else {
-                // Guest had already checked in previously
-                NSString *arrivedAt = [dateFormatter stringFromDate:[attendee valueForKey:kModelArrivalTime]];
-                NSString *alertString = [NSString stringWithFormat:@"%@ %@ was already checked in at %@.", [attendee valueForKey:kModelFirstName], [attendee valueForKey:kModelLastName], arrivedAt];
-                /*UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Already here!"
-                                                                message:alertString
-                                                               delegate:nil
-                                                      cancelButtonTitle:@"OK"
-                                                      otherButtonTitles:nil];
-                [alert show];*/
-                self.status.text = alertString;
-                AudioServicesCreateSystemSoundID(soundFileError, &soundID);
-                AudioServicesPlaySystemSound(soundID);
+                [self presentInvalidTicketErrorForFirstName:firstName lastName:lastName];
+                self.status.text = [NSString stringWithFormat: @"%@ %@'s ticket is not valid!", firstName, lastName];
             }
         }
     }
@@ -448,17 +499,14 @@ static NSString * const DuplicateGuestsSegueIdentifier = @"DuplicateGuestsSegue"
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"Attendee" inManagedObjectContext:self.managedObjectContext];
     [fetchRequest setEntity:entity];
-
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"barcodeNumber == %u", [string integerValue]];
+    
+    NSString *barcodeString = [self pruneWhitespace:string];
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"barcodeNumber == %u", [barcodeString integerValue]];
     [fetchRequest setPredicate:predicate];
 
     NSError *error = nil;
     NSArray *fetchedObjects = [self.managedObjectContext executeFetchRequest:fetchRequest error:&error];
-
-    CFBundleRef mainbundle = CFBundleGetMainBundle();
-    UInt32 soundID;
-    soundFileError = CFBundleCopyResourceURL(mainbundle, (CFStringRef) @"Error", CFSTR ("wav"), NULL);
-    soundFileSuccess = CFBundleCopyResourceURL(mainbundle, (CFStringRef) @"Success", CFSTR ("wav"), NULL);
 
     if (!fetchedObjects) {
         DLog(@"Unable to retrieve any values because: %@", error);
@@ -476,51 +524,75 @@ static NSString * const DuplicateGuestsSegueIdentifier = @"DuplicateGuestsSegue"
         self.firstNameField.text = @"";
         self.lastNameField.text = @"";
         self.status.text = [NSString stringWithFormat:@"Ticket number doesn't exist."];
-        AudioServicesCreateSystemSoundID(soundFileError, &soundID);
-        AudioServicesPlaySystemSound(soundID);
+        [self playSound:soundFileError];
 
         } else {
         // Valid guest
         // Set info on views accordingly
         NSManagedObject *attendee = [fetchedObjects lastObject];
 
-        self.ticketNumberField.text = [[attendee valueForKey:kModelTicketNumber] stringValue];
-        self.firstNameField.text = [attendee valueForKey:kModelFirstName];
-        self.lastNameField.text = [attendee valueForKey:kModelLastName];
-        self.attendanceField.text = [[attendee valueForKey:kModelAttendance] stringValue];
+        NSString *ticketNumber = [[attendee valueForKey:kModelTicketNumber] stringValue];
+        NSString *firstName = [attendee valueForKey:kModelFirstName];
+        NSString *lastName = [attendee valueForKey:kModelLastName];
+        NSString *attendance = [[attendee valueForKey:kModelAttendance] stringValue];
+            
+        self.ticketNumberField.text = ticketNumber;
+        self.firstNameField.text = firstName;
+        self.lastNameField.text = lastName;
+        self.attendanceField.text = attendance;
 
         NSInteger isHere = [[attendee valueForKey:kModelArrived] boolValue];
 
-        if (!isHere) {
-        // Guest is being checked in for the first time
-        [attendee setValue:[NSNumber numberWithBool:YES] forKey:kModelArrived];
-        [attendee setValue:[NSDate date] forKey:kModelArrivalTime];
-        self.status.text = [NSString stringWithFormat: @"%@ %@ has arrived", [attendee valueForKey:kModelFirstName], [attendee valueForKey:kModelLastName]];
-        AudioServicesCreateSystemSoundID(soundFileSuccess, &soundID);
-        AudioServicesPlaySystemSound(soundID);
-        [_inputField becomeFirstResponder];
+        if ([[attendee valueForKey:kModelAttendance] intValue] > 0) {
+            if (!isHere) {
+                // Guest is being checked in for the first time
+                [attendee setValue:[NSNumber numberWithBool:YES] forKey:kModelArrived];
+                [attendee setValue:[NSDate date] forKey:kModelArrivalTime];
+                self.status.text = [NSString stringWithFormat: @"%@ %@ has arrived.", firstName, lastName];
+                [self playSound:soundFileSuccess];
+                if (!self.isScanning) {
+                    [_inputField becomeFirstResponder];
+                }
 
+            } else {
+                // Guest has already been scanned into the system
+                NSString *arrivedAt = [dateFormatter stringFromDate:[attendee valueForKey:kModelArrivalTime]];
+                [self presentAlreadyArrivedErrorForFirstName:firstName lastName:lastName arrivedAtTime:arrivedAt];
+                self.status.text = [NSString stringWithFormat:@"%@ %@ was previously scanned into the system at %@!", firstName, lastName, arrivedAt];
+            }
         } else {
-        // Guest has already been scanned into the system
-        NSString *arrivedAt = [dateFormatter stringFromDate:[attendee valueForKey:kModelArrivalTime]];
-        NSString *alertString = [NSString stringWithFormat:@"%@ %@ has already been scanned into the system at %@!", [attendee valueForKey:kModelFirstName], [attendee valueForKey:kModelLastName], arrivedAt];
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Already here!"
-        message:alertString
-        delegate:nil
-        cancelButtonTitle:@"OK"
-        otherButtonTitles:nil];
-        [alert show];
-        self.status.text = alertString;
-        AudioServicesCreateSystemSoundID(soundFileError, &soundID);
-        AudioServicesPlaySystemSound(soundID);
-            
+            // Guest has invalid ticket (i.e. ticket exists, but the person didn't buy admission, so it's a useless ticket)
+            [attendee setValue:[NSNumber numberWithBool:YES] forKey:kModelArrived];
+            [attendee setValue:[NSDate date] forKey:kModelArrivalTime];
+            [self presentInvalidTicketErrorForFirstName:firstName lastName:lastName];
+            self.status.text = [NSString stringWithFormat: @"%@ %@'s ticket is not valid!", firstName, lastName];
         }
     }
  }
 
+- (void)presentInvalidTicketErrorForFirstName:(NSString *)firstName lastName:(NSString *)lastName {
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invalid ticket!"
+                                                    message:[NSString stringWithFormat:@"%@ %@'s ticket is NOT valid.", firstName, lastName]
+                                                   delegate:nil
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
+    [self playSound:soundFileError];
+}
+
+- (void)presentAlreadyArrivedErrorForFirstName:(NSString *)firstName lastName:(NSString *)lastName arrivedAtTime:(NSString *)time {
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Already here!"
+                                                    message:[NSString stringWithFormat:@"%@ %@ was previously scanned into the system at %@!", firstName, lastName, time]
+                                                   delegate:nil
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
+    [self playSound:soundFileError];
+}
+
 #pragma mark - DuplicateGuestsDelegate
 
-- (void) selectedDuplicateGuest:(Attendee *)attendee {
+- (void)selectedDuplicateGuest:(Attendee *)attendee {
     
     static NSDateFormatter *dateFormatter = nil;
     
@@ -530,15 +602,15 @@ static NSString * const DuplicateGuestsSegueIdentifier = @"DuplicateGuestsSegue"
         [dateFormatter setTimeStyle:NSDateFormatterShortStyle];
     }
     
-    CFBundleRef mainbundle = CFBundleGetMainBundle();
-    UInt32 soundID;
-    soundFileError = CFBundleCopyResourceURL(mainbundle, (CFStringRef) @"Error", CFSTR ("wav"), NULL);
-    soundFileSuccess = CFBundleCopyResourceURL(mainbundle, (CFStringRef) @"Success", CFSTR ("wav"), NULL);
+    NSString *ticketNumber = [[attendee valueForKey:kModelBarcodeNumber] stringValue];
+    NSString *firstName = [attendee valueForKey:kModelFirstName];
+    NSString *lastName = [attendee valueForKey:kModelLastName];
+    NSString *attendance = [[attendee valueForKey:kModelAttendance] stringValue];
     
-    self.ticketNumberField.text = [[attendee valueForKey:kModelBarcodeNumber] stringValue];
-    self.firstNameField.text = [attendee valueForKey:kModelFirstName];
-    self.lastNameField.text = [attendee valueForKey:kModelLastName];
-    self.attendanceField.text = [[attendee valueForKey:kModelAttendance] stringValue];
+    self.ticketNumberField.text = ticketNumber;
+    self.firstNameField.text = firstName;
+    self.lastNameField.text = lastName;
+    self.attendanceField.text = attendance;
     
     NSInteger isHere = [[attendee valueForKey:kModelArrived] boolValue];
     
@@ -546,24 +618,23 @@ static NSString * const DuplicateGuestsSegueIdentifier = @"DuplicateGuestsSegue"
         
         [attendee setValue:[NSNumber numberWithBool:YES] forKey:kModelArrived];
         [attendee setValue:[NSDate date] forKey:kModelArrivalTime];
-        self.status.text = [NSString stringWithFormat: @"%@ %@ is now checked in.", [attendee valueForKey:kModelFirstName], [attendee valueForKey:kModelLastName]];
-        AudioServicesCreateSystemSoundID(soundFileSuccess, &soundID);
-        AudioServicesPlaySystemSound(soundID);
-        [_inputField becomeFirstResponder];
+        self.status.text = [NSString stringWithFormat: @"%@ %@ is now checked in.", firstName, lastName];
+        [self playSound:soundFileSuccess];
+        if (!self.isScanning) {
+            [_inputField becomeFirstResponder];
+        }
         
     } else {
         NSString *arrivedAt = [dateFormatter stringFromDate:[attendee valueForKey:kModelArrivalTime]];
-        NSString *alertString = [NSString stringWithFormat:@"%@ %@ was already checked in at %@.", [attendee valueForKey:kModelFirstName], [attendee valueForKey:kModelLastName], arrivedAt];
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Already here!"
-                                                        message:alertString
-                                                       delegate:nil
-                                              cancelButtonTitle:@"OK"
-                                              otherButtonTitles:nil];
-        [alert show];
-        self.status.text = alertString;
-        AudioServicesCreateSystemSoundID(soundFileError, &soundID);
-        AudioServicesPlaySystemSound(soundID);
+        [self presentAlreadyArrivedErrorForFirstName:firstName lastName:lastName arrivedAtTime:arrivedAt];
+        self.status.text = [NSString stringWithFormat:@"%@ %@ was previously scanned into the system at %@!", firstName, lastName, arrivedAt];
     }
+}
+
+-(void)playSound:(CFURLRef)soundFile {
+    UInt32 soundID;
+    AudioServicesCreateSystemSoundID(soundFile, &soundID);
+    AudioServicesPlaySystemSound(soundID);
 }
 
 #pragma mark - String parsing

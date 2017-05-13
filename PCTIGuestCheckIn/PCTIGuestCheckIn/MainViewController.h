@@ -27,7 +27,9 @@
 @property (weak, nonatomic) IBOutlet UILabel *attendanceField;
 @property (weak, nonatomic) IBOutlet UILabel *status;
 @property (weak, nonatomic) IBOutlet UIView *previewView;
+@property (weak, nonatomic) IBOutlet UIImageView *verificationModeView;
 @property (weak, nonatomic) IBOutlet UIImageView *hudView;
+@property (weak, nonatomic) IBOutlet UIButton *verificationModeButton;
 @property (weak, nonatomic) IBOutlet UIButton *cameraButton;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *flashSegmentedControl;
 @property (weak, nonatomic) NSArray *fetchedArrivedObjects;
