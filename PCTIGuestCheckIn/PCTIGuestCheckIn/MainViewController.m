@@ -471,7 +471,7 @@ typedef enum VerificationMode : NSUInteger {
                     // Guest had already checked in previously
                     NSString *arrivedAt = [dateFormatter stringFromDate:[attendee valueForKey:kModelArrivalTime]];
                     [self presentAlreadyArrivedErrorForFirstName:firstName lastName:lastName arrivedAtTime:arrivedAt];
-                    self.status.text = [NSString stringWithFormat:@"%@ %@ was previously scanned into the system at %@!", firstName, lastName, arrivedAt];
+                    self.status.text = [NSString stringWithFormat:@"%@ %@ was previously checked in at %@!", firstName, lastName, arrivedAt];
                 }
             } else {
                 // Guest has invalid ticket (i.e. ticket exists, but the person didn't buy admission, so it's a useless ticket)
@@ -523,6 +523,7 @@ typedef enum VerificationMode : NSUInteger {
         self.ticketNumberField.text = @"";
         self.firstNameField.text = @"";
         self.lastNameField.text = @"";
+        self.attendanceField.text = @"";
         self.status.text = [NSString stringWithFormat:@"Ticket number doesn't exist."];
         [self playSound:soundFileError];
 
@@ -555,10 +556,10 @@ typedef enum VerificationMode : NSUInteger {
                 }
 
             } else {
-                // Guest has already been scanned into the system
+                // Guest has already been checked into the system
                 NSString *arrivedAt = [dateFormatter stringFromDate:[attendee valueForKey:kModelArrivalTime]];
                 [self presentAlreadyArrivedErrorForFirstName:firstName lastName:lastName arrivedAtTime:arrivedAt];
-                self.status.text = [NSString stringWithFormat:@"%@ %@ was previously scanned into the system at %@!", firstName, lastName, arrivedAt];
+                self.status.text = [NSString stringWithFormat:@"%@ %@ was previously checked in at %@!", firstName, lastName, arrivedAt];
             }
         } else {
             // Guest has invalid ticket (i.e. ticket exists, but the person didn't buy admission, so it's a useless ticket)
@@ -582,7 +583,7 @@ typedef enum VerificationMode : NSUInteger {
 
 - (void)presentAlreadyArrivedErrorForFirstName:(NSString *)firstName lastName:(NSString *)lastName arrivedAtTime:(NSString *)time {
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Already here!"
-                                                    message:[NSString stringWithFormat:@"%@ %@ was previously scanned into the system at %@!", firstName, lastName, time]
+                                                    message:[NSString stringWithFormat:@"%@ %@ was previously checked in at %@!", firstName, lastName, time]
                                                    delegate:nil
                                           cancelButtonTitle:@"OK"
                                           otherButtonTitles:nil];
@@ -627,7 +628,7 @@ typedef enum VerificationMode : NSUInteger {
     } else {
         NSString *arrivedAt = [dateFormatter stringFromDate:[attendee valueForKey:kModelArrivalTime]];
         [self presentAlreadyArrivedErrorForFirstName:firstName lastName:lastName arrivedAtTime:arrivedAt];
-        self.status.text = [NSString stringWithFormat:@"%@ %@ was previously scanned into the system at %@!", firstName, lastName, arrivedAt];
+        self.status.text = [NSString stringWithFormat:@"%@ %@ was previously checked in at %@!", firstName, lastName, arrivedAt];
     }
 }
 
